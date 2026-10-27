@@ -1,0 +1,9 @@
+[
+  {
+    "AllowedOrigins": ["https://shush.endlesslibrary.com.au"],
+    "AllowedMethods": ["GET", "PUT", "POST", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3000
+  }
+]

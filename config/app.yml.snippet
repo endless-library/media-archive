@@ -1,0 +1,25 @@
+# Additions to /var/discourse/containers/app.yml for R2 uploads.
+# Placeholders only. Real keys live on the server and in the password manager.
+# Indentation is two spaces per level; merge into the existing sections, don't duplicate them.
+
+params:
+  upload_size: 250m          # nginx body limit; must be >= max attachment size in site settings
+
+env:
+  DISCOURSE_USE_S3: true
+  DISCOURSE_S3_REGION: auto                                   # R2 has no real regions
+  DISCOURSE_S3_INSTALL_CORS_RULE: false                       # set by hand in R2 (config/r2-cors.json)
+  DISCOURSE_S3_ENDPOINT: https://<ACCOUNT_ID>.r2.cloudflarestorage.com   # account-level, no bucket name
+  DISCOURSE_S3_ACCESS_KEY_ID: <R2_ACCESS_KEY_ID>
+  DISCOURSE_S3_SECRET_ACCESS_KEY: <R2_SECRET_ACCESS_KEY>
+  DISCOURSE_S3_BUCKET: endless-uploads
+  DISCOURSE_S3_CDN_URL: https://media.endlesslibrary.com.au   # the public custom domain, NOT the endpoint
+  # Backups deliberately stay local: Discourse can't read backups back out of R2.
+
+hooks:
+  after_assets_precompile:
+    - exec:
+        cd: $home
+        cmd:
+          - sudo -E -u discourse bundle exec rake s3:upload_assets
+          - sudo -E -u discourse bundle exec rake s3:expire_missing_assets
